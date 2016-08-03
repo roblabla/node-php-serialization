@@ -4,7 +4,8 @@
     var bigdecimal=require("bigdecimal");
     exports.unserialize = unserialize;
     exports.serialize=serialize;
-	exports.Class=Class;
+    exports.Class=Class;
+    exports.unserialize_item = unserialize_item;
 
 
     function read(string,length) {
@@ -39,24 +40,26 @@
 
 
 
-    function readUntil(string, delimiter,delimiter2) {
+    function readUntil(string, delimiters) {
         var buf = "";
-        if (delimiter2==undefined) {
-            delimiter2=delimiter;
+        if (typeof delimiters === "string" || delimiters instanceof String) {
+            delimiters = [delimiters];
         }
         var counter = 0;
-        for (; ; counter++) {
+        for (; counter < string.length; counter++) {
             var rawc = string.charCodeAt(counter);
             var c;
             if (rawc==0) {
                 continue;
             }
             c=String.fromCharCode(rawc);
-            if (c == delimiter || c==delimiter2) {
+            if (delimiters.indexOf(c) > -1) {
                 break;
             }
             buf += c;
         }
+        if (counter === string.length)
+          throw new Error("Invalid thing.");
         string = string.substr(buf.length + 1);
         return {result: buf, buffer: string};
     }
@@ -64,7 +67,7 @@
         var result = "";
         var buf = string;
         var copy=buf;
-        var typeResult = readUntil(buf, ':',';');
+        var typeResult = readUntil(buf, [':', ';']);
         buf = typeResult.buffer;
         var type = typeResult.result;
         var buf2, buf2Result;

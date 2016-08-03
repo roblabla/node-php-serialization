@@ -53,6 +53,15 @@
             result+=val.get().toString();
         }
         return result;
-    }
+    };
+    Class.prototype.toObject=function() {
+        var result = {};
+        for (k in this.__attr__) {
+            result[k] = this.__attr__[k].val;
+            if (this.__attr__[k].type === "float")
+              result[k] = result[k].doubleValue();
+        }
+        return result;
+    };
 
 })((typeof window === 'undefined') ? global : window, (typeof window === 'undefined') ? exports : (window.Class = {}));
