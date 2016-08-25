@@ -57,9 +57,12 @@
     Class.prototype.toObject=function() {
         var result = {};
         for (k in this.__attr__) {
-            result[k] = this.__attr__[k].val;
-            if (this.__attr__[k].type === "float")
-              result[k] = result[k].doubleValue();
+            if (result[k] instanceof Class)
+              result[k] = this.__attr__[k].val.toObject();
+            else if (this.__attr__[k].type === "float")
+              result[k] = this.__attr__[k].val.doubleValue();
+            else
+              result[k] = this.__attr__[k].val;
         }
         return result;
     };
