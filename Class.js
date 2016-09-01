@@ -23,6 +23,8 @@
                 val=v;
             }
         }
+        if (name == "__attr__")
+          throw new Error("Cannot have properly named __attr__");
         this.__attr__[name]={val:val,type:type,scope:scope,get:_getter,set:_setter,kType:kType}
         Object.defineProperty(this,name,{
             get:function() {
@@ -57,7 +59,7 @@
     Class.prototype.toObject=function() {
         var result = {};
         for (k in this.__attr__) {
-            if (result[k] instanceof Class)
+            if (this.__attr__[k].val instanceof Class)
               result[k] = this.__attr__[k].val.toObject();
             else if (this.__attr__[k].type === "float")
               result[k] = this.__attr__[k].val.doubleValue();
